@@ -60,16 +60,20 @@ class AssettoCorsaAutonomousAgent(Node):
         self.K_lqr_accel = None
         self.K_lqr_brake = None
         self.compute_lqr_gains()
+        # changed
+        self.kp_speed = 0.25
+        # changed
+        self.ki_speed = 0.0005  
+        # changed
+        self.kd_speed = 0.02 
 
-        self.kp_speed = 0.18
-        self.ki_speed = 0.002  
-        self.kd_speed = 0.01 
-        
-        self.k_accel = 0.4 
+        #known: Motor Torque(14.3) Drivetrain effiency(0.92) Unkown: gear ratio ,wheel radius 
+        self.k_accel = 0.2
         self.kp_brake = 0.6
         self.ki_brake = 0.03  
         
-        self.k_brake_accel = 0.04 
+        #known: Motor Torque(14.3) Drivetrain effiency(0.92) Unkown: gear ratio ,wheel radius
+        self.k_brake_accel = 0.1
         self.integral_speed_error = 0.0
         self.prev_speed_error = 0.0
         self.max_integral = 10.0  
@@ -79,15 +83,17 @@ class AssettoCorsaAutonomousAgent(Node):
         self.prev_brake = 0.0
         self.max_throttle_rate = 5.0
         self.max_brake_rate = 10.0
-        
-        self.throttle_filter_alpha = 0.5
+
+        # changed
+        self.throttle_filter_alpha = 0.8
         self.filtered_throttle = 0.0
         
         self.brake_filter_alpha = 0.7
         self.filtered_brake = 0.0
         
         self.speed_deadband = 1.0 / 3.6 
-        self.max_lateral_accel = 30.0
+        # changed
+        self.max_lateral_accel = 12.0
         self.min_speed = 30.0
         
         self.current_x = 0.0
@@ -355,7 +361,8 @@ class AssettoCorsaAutonomousAgent(Node):
             brake_cmd = 0.0
             self.integral_speed_error *= 0.95
             
-        max_thr_delta = 8.0 * dt
+        # changed 
+        max_thr_delta = 15.0 * dt
         thr_delta = throttle_cmd - self.prev_throttle
         thr_delta = max(-max_thr_delta, min(max_thr_delta, thr_delta))
         throttle_cmd = self.prev_throttle + thr_delta
